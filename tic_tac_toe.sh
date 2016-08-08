@@ -160,14 +160,15 @@ function player_move {
 }
 
 function NPC_move {
-    t=32767
-    n=0
-    
-    while [ $n -lt 1 ] && [ $n -gt 10 ]
+    t=32767; n=0
+
+    while [ 1 ]
     do
         let x=$RANDOM*9
-        ./ceiling.sh $x $t
-        n=$?
+        n=$( ./ceiling.sh $x $t )
+        if [ $n -gt 0 ] && [ $n -lt 10 ]
+        then break
+        fi
     done
     
     return $n
