@@ -53,7 +53,7 @@ function rules_expl {
 }
 
 function game_match {
-    grid_data=( ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' )    
+    grid_data=( 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' )    
     turn=0
     symbol_turn=0
     next_move_by=$whostarted
@@ -61,15 +61,24 @@ function game_match {
     while [ 1 ]
     do
         # Move
-        if [ $next_move_by = 'player' ]
-        then
-            next_move_by='NPC'
-            player_move
-        else
-            next_move_by='player'
-            NPC_move
-        fi
-        move=$?
+        get_move=1
+        while [ $get_move -eq 1 ]
+        do
+            if [ $next_move_by = 'player' ]
+            then player_move
+            else NPC_move
+            fi
+            move=$?
+            let i=$move-1
+            if [ ${grid_data[$i]} = 'z' ]
+            then
+                get_move=0
+                if [ $next_move_by = 'player' ]
+                then next_move_by='NPC'
+                else next_move_by='player'
+                fi  
+            fi
+        done
         let turn++
         
         # Idetify if cross or nough and saves to grid
@@ -82,11 +91,23 @@ function game_match {
             grid_data[$i]=$nough
         fi
         
-        echo " ${grid_data[0]} | ${grid_data[1]} | ${grid_data[2]} "
+        # Printing
+        i=0
+        while [ $i -lt 9 ]
+        do
+            print_grid[$i]=${grid_data[$i]}
+            if [ ${print_grid[$i]} = 'z' ]
+            then print_grid[$i]=' '
+            fi
+            let i++
+        done
+        
+        echo " ${print_grid[0]} | ${print_grid[1]} | ${print_grid[2]} "
         echo '———+———+———'
-        echo " ${grid_data[3]} | ${grid_data[4]} | ${grid_data[5]} "
+        echo " ${print_grid[3]} | ${print_grid[4]} | ${print_grid[5]} "
         echo '———+———+———'
-        echo " ${grid_data[6]} | ${grid_data[7]} | ${grid_data[8]} "
+        echo " ${print_grid[6]} | ${print_grid[7]} | ${print_grid[8]} "
+        
     done
 }
 
@@ -141,9 +162,9 @@ then
     whostarts
     if [ $? -eq 90 ]
     then
-        whostarted="player"
+        whostarted='player'
     else
-        whostarted="NPC"
+        whostarted='NPC'
     fi
     game_match
 fi
