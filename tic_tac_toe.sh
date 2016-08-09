@@ -64,76 +64,77 @@ function game_match {
     grid_9=' '
     turn=0
     symbol_turn=0
+    next_move_by=$whostarted
     
-    if [ $turn -eq 0 ]
-    then
-        if [ $whostarted = "player" ]
+    while [ 1 ]
+    do
+        # Move
+        if [ $next_move_by = "player" ]
         then
+            next_move_by="NPC"
             player_move
         else
+            next_move_by="player"
             NPC_move
         fi
-    else
-        echo something
-    fi
-    move=$?
-    echo "Move returned: $move"
-    let turn++
-    
-    # Idetify if cross or nough
-    let symbol_turn=$turn%2
-    if [ $symbol_turn -eq 1 ]
-    then
-        symbol=$cross
-    else
-        symbol=$nough
-    fi
-    
-    case $move in
-        1)
-            grid_1=$symbol
-            ;;
-        2)
-            grid_2=$symbol
-            ;;
-        3)
-            grid_3=$symbol
-            ;;
-        4)
-            grid_4=$symbol
-            ;;
-        5)
-            grid_5=$symbol
-            ;;
-        6)
-            grid_6=$symbol
-            ;;
-        7)
-            grid_7=$symbol
-            ;;
-        8)
-            grid_8=$symbol
-            ;;
-        9)
-            grid_9=$symbol
-            ;;            
-        *)
-            echo "An error ocurred"
-            ;;
-    esac
-    
-    echo " $grid_1 | $grid_2 | $grid_3 "
-    echo '———+———+———'
-    echo " $grid_4 | $grid_5 | $grid_6 "
-    echo '———+———+———'
-    echo " $grid_7 | $grid_8 | $grid_9 "
+        move=$?
+        let turn++
+        
+        # Idetify if cross or nough
+        let symbol_turn=$turn%2
+        if [ $symbol_turn -eq 1 ]
+        then
+            symbol=$cross
+        else
+            symbol=$nough
+        fi
+        
+        case $move in
+            1)
+                grid_1=$symbol
+                ;;
+            2)
+                grid_2=$symbol
+                ;;
+            3)
+                grid_3=$symbol
+                ;;
+            4)
+                grid_4=$symbol
+                ;;
+            5)
+                grid_5=$symbol
+                ;;
+            6)
+                grid_6=$symbol
+                ;;
+            7)
+                grid_7=$symbol
+                ;;
+            8)
+                grid_8=$symbol
+                ;;
+            9)
+                grid_9=$symbol
+                ;;            
+            *)
+                echo "An error ocurred"
+                ;;
+        esac
+        
+        echo " $grid_1 | $grid_2 | $grid_3 "
+        echo '———+———+———'
+        echo " $grid_4 | $grid_5 | $grid_6 "
+        echo '———+———+———'
+        echo " $grid_7 | $grid_8 | $grid_9 "
+    done
 }
 
 function whostarts {
     let a=$RANDOM%2
     if [ $a -eq 1 ]
     then
-        # User
+        # Player
         return 90
     else
         # NPC
