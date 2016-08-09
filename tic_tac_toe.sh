@@ -2,7 +2,7 @@
 # Tic-tac-toe game
 
 start_game=0
-whostarted=NPC
+whostarted='NPC'
 cross='x'
 nough='o'
 
@@ -53,15 +53,7 @@ function rules_expl {
 }
 
 function game_match {
-    grid_1=' '
-    grid_2=' '
-    grid_3=' '
-    grid_4=' '
-    grid_5=' '
-    grid_6=' '
-    grid_7=' '
-    grid_8=' '
-    grid_9=' '
+    grid_data=( ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' )    
     turn=0
     symbol_turn=0
     next_move_by=$whostarted
@@ -69,64 +61,32 @@ function game_match {
     while [ 1 ]
     do
         # Move
-        if [ $next_move_by = "player" ]
+        if [ $next_move_by = 'player' ]
         then
-            next_move_by="NPC"
+            next_move_by='NPC'
             player_move
         else
-            next_move_by="player"
+            next_move_by='player'
             NPC_move
         fi
         move=$?
         let turn++
         
-        # Idetify if cross or nough
+        # Idetify if cross or nough and saves to grid
         let symbol_turn=$turn%2
+        let i=$move-1
         if [ $symbol_turn -eq 1 ]
         then
-            symbol=$cross
+            grid_data[$i]=$cross
         else
-            symbol=$nough
+            grid_data[$i]=$nough
         fi
         
-        case $move in
-            1)
-                grid_1=$symbol
-                ;;
-            2)
-                grid_2=$symbol
-                ;;
-            3)
-                grid_3=$symbol
-                ;;
-            4)
-                grid_4=$symbol
-                ;;
-            5)
-                grid_5=$symbol
-                ;;
-            6)
-                grid_6=$symbol
-                ;;
-            7)
-                grid_7=$symbol
-                ;;
-            8)
-                grid_8=$symbol
-                ;;
-            9)
-                grid_9=$symbol
-                ;;            
-            *)
-                echo "An error ocurred"
-                ;;
-        esac
-        
-        echo " $grid_1 | $grid_2 | $grid_3 "
+        echo " ${grid_data[0]} | ${grid_data[1]} | ${grid_data[2]} "
         echo '———+———+———'
-        echo " $grid_4 | $grid_5 | $grid_6 "
+        echo " ${grid_data[3]} | ${grid_data[4]} | ${grid_data[5]} "
         echo '———+———+———'
-        echo " $grid_7 | $grid_8 | $grid_9 "
+        echo " ${grid_data[6]} | ${grid_data[7]} | ${grid_data[8]} "
     done
 }
 
@@ -162,16 +122,8 @@ function player_move {
 
 function NPC_move {
     t=32767; n=0
-
-    while [ 1 ]
-    do
-        let x=$RANDOM*9
-        n=$( ./ceiling.sh $x $t )
-        if [ $n -gt 0 ] && [ $n -lt 10 ]
-        then break
-        fi
-    done
-    
+    let x=$RANDOM*9
+    n=$( ./ceiling.sh $x $t )
     return $n
 }
 
