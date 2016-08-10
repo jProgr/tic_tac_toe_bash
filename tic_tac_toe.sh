@@ -1,5 +1,6 @@
 #!/bin/bash
 # Tic-tac-toe game
+# Uncopyrighted - https://creativecommons.org/publicdomain/zero/1.0/
 
 start_game=0
 whostarted='NPC'
@@ -53,15 +54,16 @@ function rules_expl {
 }
 
 function game_match {
-    grid_data=( 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' )    
-    turn=0
-    symbol_turn=0
-    someone_won=0
-    next_move_by=$whostarted
+    grid_data=( 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' )   # Where moves are stored, 'z' are empty spaces
+    turn=0                                              # Turn counter. Game starts at turn one
+    symbol_turn=0                                       # Keeps track of 'x' and 'o'
+    someone_won=0                                       # Flag for end of the game
+    next_move_by=$whostarted                            # Keeps track of whose turn it is
     
+    # Main loop of the game. Each tick is a move.
     while [ $someone_won -eq 0 ]
     do
-        # Move
+        # Gets move by either player
         get_move=1
         while [ $get_move -eq 1 ]
         do
@@ -71,6 +73,7 @@ function game_match {
             fi
             move=$?
             let i=$move-1
+            # Checks if the space is empty
             if [ ${grid_data[$i]} = 'z' ]
             then
                 get_move=0
@@ -82,7 +85,7 @@ function game_match {
         done
         let turn++
         
-        # Idetify if cross or nough and saves to grid
+        # Identify if cross or nough and saves to grid
         let symbol_turn=$turn%2
         let i=$move-1
         if [ $symbol_turn -eq 1 ]
@@ -95,17 +98,19 @@ function game_match {
         # Identify winning conditions
         if [ $turn -gt 4 ]
         then
-            n_case=1
-            i=( {0..8} 0 3 6 1 4 7 2 5 8 0 4 8 2 4 6 )
+            n_case=1                                    # 8 different ways to win. Ckecks one by one
+            i=( {0..8} 0 3 6 1 4 7 2 5 8 0 4 8 2 4 6 )  # Stores the indexes of all the ways to win in order: per row, per column, diagonals
             j=( {0..2} )
             while [ $n_case -lt 9 ]
             do
+                # Saves the case and checks if every char is the same
                 chain=$( echo "${grid_data[${i[${j[0]}]}]}${grid_data[${i[${j[1]}]}]}${grid_data[${i[${j[2]}]}]}" )
                 if [ $chain = 'xxx' ] || [ $chain = 'ooo' ]
                 then
                     someone_won=1
                     break
                 else
+                    # Goes to next case
                     for val in {0..2}
                     do let j[$val]=${j[$val]}+3
                     done
@@ -122,6 +127,7 @@ function game_match {
                 else echo "You lose"
                 fi
             else
+                # If nobody won
                 if [ $turn -eq 9 ]
                 then
                     someone_won=1
@@ -134,6 +140,7 @@ function game_match {
         i=0
         while [ $i -lt 9 ]
         do
+            # Takes the info of the grid and prepares it
             print_grid[$i]=${grid_data[$i]}
             if [ ${print_grid[$i]} = 'z' ]
             then print_grid[$i]=' '
@@ -180,6 +187,7 @@ function player_move {
 
 }
 
+# NPC algorithm is to choose randomly
 function NPC_move {
     t=32767; n=0
     let x=$RANDOM*9
