@@ -56,9 +56,10 @@ function game_match {
     grid_data=( 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' 'z' )    
     turn=0
     symbol_turn=0
+    someone_won=0
     next_move_by=$whostarted
     
-    while [ 1 ]
+    while [ $someone_won -eq 0 ]
     do
         # Move
         get_move=1
@@ -89,6 +90,44 @@ function game_match {
             grid_data[$i]=$cross
         else
             grid_data[$i]=$nough
+        fi
+        
+        # Identify winning conditions
+        if [ $turn -gt 4 ]
+        then
+            n_case=1
+            i=( {0..8} 0 3 6 1 4 7 2 5 8 0 4 8 2 4 6 )
+            j=( {0..2} )
+            while [ $n_case -lt 9 ]
+            do
+                chain=$( echo "${grid_data[${i[${j[0]}]}]}${grid_data[${i[${j[1]}]}]}${grid_data[${i[${j[2]}]}]}" )
+                if [ $chain = 'xxx' ] || [ $chain = 'ooo' ]
+                then
+                    someone_won=1
+                    break
+                else
+                    for val in {0..2}
+                    do let j[$val]=${j[$val]}+3
+                    done
+                    let n_case++
+                fi
+            done
+            
+            # Identify who won
+            if [ $someone_won -eq 1 ]
+            then
+                let whosturn=$turn%2
+                if [ $next_move_by = 'NPC' ]
+                then echo "You won!"
+                else echo "You lose"
+                fi
+            else
+                if [ $turn -eq 9 ]
+                then
+                    someone_won=1
+                    echo "Tie"
+                fi
+            fi  
         fi
         
         # Printing
