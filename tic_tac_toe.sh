@@ -31,7 +31,7 @@ function menu {
             ;;
         *)
             echo 'Not a valid option'
-            ###–clear
+            clear
             menu
             ;;
     esac
@@ -123,20 +123,21 @@ function game_match {
             then
                 let whosturn=$turn%2
                 if [ $next_move_by = 'NPC' ]
-                then echo "You won!"
-                else echo "You lose"
+                then win_message="You won!"
+                else win_message="You lose"
                 fi
             else
                 # If nobody won
                 if [ $turn -eq 9 ]
                 then
                     someone_won=1
-                    echo "Tie"
+                    win_message="Tie"
                 fi
             fi  
         fi
         
         # Printing
+        clear
         i=0
         while [ $i -lt 9 ]
         do
@@ -153,6 +154,10 @@ function game_match {
         echo " ${print_grid[3]} | ${print_grid[4]} | ${print_grid[5]} "
         echo '———+———+———'
         echo " ${print_grid[6]} | ${print_grid[7]} | ${print_grid[8]} "
+        
+        if [ $someone_won -eq 1 ]
+        then echo $win_message
+        fi
         
     done
 }
@@ -197,15 +202,14 @@ function NPC_move {
 
 # ===== Main =====
 
-splash
-menu
-if [ $start_game -eq 1 ]
-then
+splash; menu
+while [ $start_game -eq 1 ]
+do
     start_game=0
-    ###–clear
+    clear
     rules_expl
     echo 'Ok?'; read ok
-    ###–clear
+    clear
     whostarts
     if [ $? -eq 90 ]
     then
@@ -214,4 +218,6 @@ then
         whostarted='NPC'
     fi
     game_match
-fi
+    read ok
+    clear; splash; menu
+done
